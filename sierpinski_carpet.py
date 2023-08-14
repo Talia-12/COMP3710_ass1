@@ -32,8 +32,6 @@ for layer in range(1, layers + 1):
 		outLayer = torch.logical_and(outLayer, shouldBeFilled)
 	out = torch.logical_or(out, outLayer)
 
-print(out.cpu().numpy())
-
 #plot
 import matplotlib.pyplot as plt
 plt.imshow(out.cpu().numpy(), cmap='gray', vmin=0, vmax=1)

@@ -12,14 +12,17 @@ if (not torch.cuda.is_available()):
 # Use NumPy to create a 2D array of complex numbers on [-1.6,1.6]x[-1.3,1.3]
 Y, X = np.mgrid[-1.3:1.3:0.0005, -1.6:1.6:0.0005]
 
+cReal = np.full(X.shape, -1)
+cImag = np.full(X.shape, 0)
+
 # load into PyTorch tensors
 x  = torch.Tensor(X)
 y  = torch.Tensor(Y)
 zs = torch.complex(x, y) #important!
 ns = torch.zeros_like(zs)
 c  = torch.complex(
-	torch.zeros(zs.size()),
-	torch.ones(zs.size())
+	torch.Tensor(cReal),
+	torch.Tensor(cImag)
 )
 
 # transfer to the GPU device
@@ -29,7 +32,12 @@ c = c.to(device)
 
 #Mandelbrot Set
 for i in range(200):
-	#Compute the new values of z: z^2 + x
+	# Compute the new values of z: z^2 + c
+	# c is a constant, z is initialised as
+	# the value of the starting point
+	# If the zs sequences don't diverge for
+	# that starting point, that starting point
+	# is in the Julia set for c.
 	zs_ = zs * zs + c
 	#Have we diverged with this new value?
 	not_diverged = torch.abs(zs_) < 32.0
